@@ -1,42 +1,38 @@
 import './App.css';
-import { getAuth, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import Form from 'react-bootstrap/Form'
+import { Button } from 'react-bootstrap';
+import { getAuth } from "firebase/auth";
 import app from './firebase.init';
-import { useState } from 'react';
 
-const auth = getAuth(app);
-
+const auth = getAuth(app)
 function App() {
-  const [user, setUser] = useState({})
-  const signInWithGit = () => {
-    const gitProvider = new GithubAuthProvider();
-    signInWithPopup(auth, gitProvider)
-      .then((result) => {
-        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-
-        // The signed-in user info.
-        const user = result.user;
-        setUser(user)
-        console.log(user)
-        // ...
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GithubAuthProvider.credentialFromError(error);
-        // ...
-      });
-
+  const handleEmail = (event) => {
+    console.log(event.target.value)
+  }
+  const handlePassword = (event) => {
+    console.log(event.target.value)
+  }
+  const handleSubmit = (event) => {
+    console.log('form submitt')
+    event.preventDefault();
   }
   return (
+
     <div className="App">
-      <button onClick={signInWithGit}>With GitHab</button>
-      <h1>{user.displayName}</h1>
-      <img src={user.photoURL} alt="" />
+      <Form onSubmit={handleSubmit} className='w-50 mx-auto mt-5'>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control onBlur={handleEmail} type="email" placeholder="Enter email" />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control onBlur={handlePassword} type="password" placeholder="Password" />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
     </div>
   );
 }
