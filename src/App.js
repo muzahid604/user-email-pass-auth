@@ -1,7 +1,7 @@
 import './App.css';
 import Form from 'react-bootstrap/Form'
 import { Button } from 'react-bootstrap';
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import app from './firebase.init';
 import { useState } from 'react';
 
@@ -10,12 +10,25 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
-  const [passErorr, setPassErorr] = useState('');
+  const [passError, setPassError] = useState('');
+  const provider = new FacebookAuthProvider();
   const handleEmail = (event) => {
     setEmail(event.target.value)
   }
   const handlePassword = (event) => {
     setPassword(event.target.value)
+  }
+  const handleFacebookbtn = () => {
+    signInWithPopup(auth, provider)
+      .then(result => {
+        const user = result.user;
+        console.log(user)
+      })
+      .catch(
+        error => {
+          console.log(error)
+        }
+      )
   }
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -25,10 +38,10 @@ function App() {
       return;
     }
     if (!/(?=.*[!@#$%^&*])/.test(password)) {
-      setPassErorr('please set a strong password')
+      setPassError('please set a strong password')
       return;
-
     }
+
 
     setValidated(true);
     createUserWithEmailAndPassword(auth, email, password)
@@ -67,12 +80,14 @@ function App() {
             Please provide a valid password.
           </Form.Control.Feedback>
         </Form.Group>
-        <p className='text-danger'>{passErorr}</p>
+        <p className='text-danger'>{passError}</p>
         <Button variant="primary" type="submit">
           Submit
         </Button>
       </Form>
+      <button onClick={handleFacebookbtn} className='btn-primary'>Facebook</button>
     </div>
+
   );
 }
 
